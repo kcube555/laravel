@@ -8,14 +8,14 @@
 						@if( $menuItem->url == '' )
 							<li class="nav-item"> <a class="nav-link" href="#" data-toggle="collapse" data-target="#{{ $menuItem->title }}" > <i class="{{ $menuItem->icon }}"></i> {{ $menuItem->title }} </a></li>
 						@else
-							<li class="nav-item"> <a class="nav-link" href="{{ $menuItem->url }}"> <i class="{{ $menuItem->icon }}"></i> {{ $menuItem->title }}</a> </li>
+							<li class="nav-item"> <a class="nav-link" href="{{ URL::to($menuItem->url) }}"> <i class="{{ $menuItem->icon }}"></i> {{ $menuItem->title }}</a> </li>
 						@endif
 					@endif
 
 					@if( ! $menuItem->children->isEmpty() )
 						<ul class="collapse nav flex-column" id="{{ $menuItem->title }}">
 							@foreach($menuItem->children as $subMenuItem)
-								<li class="nav-item"><a class="nav-link" href="{{ $subMenuItem->url }}"> <i class="{{ $subMenuItem->icon }}"></i> {{ $subMenuItem->title }}</a></li>
+								<li class="nav-item"><a class="nav-link" href="{{ URL::to($subMenuItem->url) }}"> <i class="{{ $subMenuItem->icon }}"></i> {{ $subMenuItem->title }}</a></li>
 							@endforeach
 						</ul>
 					@endif

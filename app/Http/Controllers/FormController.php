@@ -27,7 +27,10 @@ class FormController extends ControllerBase
 		} else {
 			$row = new $model_name();
 		}
+		$data['row'] = $row;
+		$data['dir'] = $dir;
+		$data['model'] = $model;
 
-		echo "<pre>"; print_r($row); exit();
+		return view(strtolower($dir).'.'.strtolower($model).'_edit', $data);
 	}
 }
