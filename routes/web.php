@@ -17,14 +17,16 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
+// Static Route
 Route::get('/', 'ControllerBase@index');
-
 Route::match(['GET', 'POST'], 'login', 'UserController@login')->name('login');
-// Route::match(['GET', 'POST'], 'store', 'UserController@registration');
-Route::get('logout', 'UserController@logout')->middleware('auth');
 
 Route::get('dashboard', 'UserController@dashboard')->middleware('auth');
+Route::get('logout', 'UserController@logout')->middleware('auth');
 
+Route::post('{dir}/{model}/simple_json', 'FormController@simpleJson')->middleware('auth');
+
+// Dynamic Route
 Route::get('{dir}/{model}', 'FormController@list')->middleware('auth');
-Route::get('{dir}/{model}/{id}', 'FormController@edit')->middleware('auth');
+Route::match(['GET', 'POST'], '{dir}/{model}/{id}', 'FormController@edit')->middleware('auth');
 

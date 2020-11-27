@@ -51,10 +51,10 @@ class UserController extends ControllerBase
 			return view('user.dashboard', $data);
 		}
 
-		return redirect::to("login")->withError('Oopps! You do not have access');
+		// return redirect::to("login")->withError('Oopps! You do not have access');
 	}
 
-	public function logout(Request $request ) {
+	public function logout(Request $request) {
 		$request->session()->flush();
 		Auth::logout();
 		return Redirect('login');

@@ -18,12 +18,19 @@
 
 	@include('main.sliderbar')
 
-	@yield('content')
+	<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+
+		@yield('content')
+	
+	</main>
 
 	<script type="text/javascript" src="{{ URL::asset('js/jquery.min.js') }}"></script>
 	<script type="text/javascript" src="{{ URL::asset('js/popper.min.js') }}"></script>
 	<script type="text/javascript" src="{{ URL::asset('js/bootstrap.min.js') }}"></script>
 	<script type="text/javascript" src="{{ URL::asset('js/vue.js') }}"></script>
+	<script type="text/javascript" src="{{ URL::asset('js/axios.min.js') }}"></script>
+
+	@yield('javascript')
 
 </body>
 </html>

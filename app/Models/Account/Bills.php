@@ -28,4 +28,15 @@ class Bills extends \App\Models\BaseModel {
 
 		return $data;
 	}
+
+	public function saveForm($id, $post) {
+		$post = $post['post_data'];
+		$this->type = $post['type'];
+		$this->number = $post['number'];
+		$this->user_id = 1;
+		$this->party_id = $post['customer_id'];
+		// $this->total_amount = $post['customer_id']
+		$this->save();
+		return $this->id;
+	}
 }
