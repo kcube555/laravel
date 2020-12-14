@@ -27,6 +27,6 @@ Route::get('logout', 'UserController@logout')->middleware('auth');
 Route::post('{dir}/{model}/simple_json', 'FormController@simpleJson')->middleware('auth');
 
 // Dynamic Route
-Route::get('{dir}/{model}', 'FormController@list')->middleware('auth');
+Route::get('{dir}/{model}', 'FormController@indexList')->middleware('auth');
 Route::match(['GET', 'POST'], '{dir}/{model}/{id}', 'FormController@edit')->middleware('auth');
 

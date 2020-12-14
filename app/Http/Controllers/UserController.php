@@ -29,14 +29,9 @@ class UserController extends ControllerBase
 			]);
 
 			$credentials = $request->only('email', 'password');
-			// $user = User::where('id', 2)->first();
-			// $user->password = Hash::make($user->password);
-			// $user->save();
-			// dd($user->password);
-
-			// dd(Auth::attempt($credentials));
 
 			if (Auth::attempt($credentials)) {
+				
 				return redirect()->intended('dashboard');
 			} else {
 				return back()->with('error', 'Whoops! invalid username or password.')->withInput();
