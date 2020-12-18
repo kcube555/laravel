@@ -41,27 +41,36 @@ class FormController extends ControllerBase
 		}
 
 		if(request()->isMethod('POST')) {
+			// request()->file('test')->store('', "google");
+			// exit;
 			$postAll = request()->all();
+			// $files   = $postAll['files'][0];
+			// \Log::info($files); exit;
+			// $files->store('', "google");
+			// dd(request()->file('test'));
+			// $file = request()->file('test');
+			// $files = \Storage::disk('google')->allFiles();
+			// \Log::info($files);
+			// exit;
+			// \Log::info($file->getClientOriginalName()); exit;
+			// echo "DONE";
+			// exit;
+			// $client = new \Google_Client();
+			// echo "Done"; exit;
 			$post    = json_decode($postAll['row']);
-			$files   = $postAll['files'];
-			foreach ($files as $key => $file) {
-				$file_ext = $file->getClientOriginalExtension();
-				$unique_id = uniqid();
-				// echo $file_ext."<br>";
-				$contents = file_get_contents($file->path());
-				// \Storage::disk('local')->put('example.txt', 'Contents');
-				// $path = $file->store('avatars', 's3');
-				\Storage::disk('local')->put($unique_id.'.'.$file_ext, $contents);
-				// $newPath  = $file->store('local', 's3');
-				// echo $newPath; exit;
-			}
+			// foreach ($files as $key => $file) {
+			// 	$file_ext = $file->getClientOriginalExtension();
+			// 	$unique_id = uniqid();
+			// 	$contents = file_get_contents($file->path());
+			// 	\Storage::disk('local')->put('kanji/'.$unique_id.'.'.$file_ext, $contents);
+			// }
 
 			// $file = request()->file->path();
 			// $file = request()->file('file');
 			// echo $file; exit;
 			// $contents = file_get_contents($file);
 
-			echo "<pre>"; print_r($post); exit;
+			// echo "<pre>"; print_r($post); exit;
 			$id = $row->saveForm($id, $post);
 
 			return response()->json([

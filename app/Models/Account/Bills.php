@@ -76,7 +76,7 @@ class Bills extends \App\Models\BaseModel {
 	}
 
 	public function saveForm($id, $post) {
-		$post = $post['row'];
+		// $post = $post['row'];
 
 		foreach ($post as $key => $value) {
 			if(\Schema::hasColumn($this->getTable(), $key)) {
@@ -90,10 +90,9 @@ class Bills extends \App\Models\BaseModel {
 
 		$this->save();
 
+		if(isset($post['insert_items'])) {
 		$child_model_name = "\App\Models"."\\".$post['item_dir']."\\".$post['item_model'];
 		$parent_id  = $post['parent_id'];
-
-		if(isset($post['insert_items'])) {
 
 			foreach ($post['insert_items'] as $items) {
 				$row = new $child_model_name();

@@ -47,6 +47,7 @@
 								<th width="40%">Name <span class="text-danger">*</span></th>
 								<th>Price</th>
 								<th>Qty</th>
+								<th>Attachment</th>
 								<th>Total</th>
 								<th width="10%">Action</th>
 							</tr>
@@ -57,6 +58,7 @@
 								<td width="40%"><small><b> <% item.item_name %> </b></small></td>
 								<td><input type="text" class="form-control form-control-sm" v-model="item.price"></td>
 								<td><input type="text" class="form-control form-control-sm" v-model="item.quentity"></td>
+								<td></td>
 								<td><input type="text" class="form-control form-control-sm" v-model="itemTotal(item)" readonly=""></td>
 								<td>{!! $common->edit_button !!}</td>
 							</tr>
@@ -72,6 +74,7 @@
 								</td>
 								<td><input type="text" class="form-control form-control-sm" v-model="item.price"></td>
 								<td><input type="text" class="form-control form-control-sm" v-model="item.quentity"></td>
+								<td><label class="btn btn-default">Browse <input type="file" @change="ItemhandleFile($event, index)" hidden></label></td>
 								<td><input type="text" class="form-control form-control-sm" v-model="itemTotal(item)" readonly=""></td>
 								<td>{!! $common->add_button !!}</td>
 							</tr>
@@ -81,6 +84,7 @@
 									<td colspan="2" class="text-right"> Total Amount : </td>
 									<td><% net_total_price %></td>
 									<td><% net_total_qty %></td>
+									<td></td>
 									<td><% net_total_total %></td>
 									<td></td>
 								</tr>
@@ -89,10 +93,10 @@
 					</div>
 					<div class="row">
 					  <div class="form-group row">
-						<label class="col-md-4 col-form-label text-md-right">Thumbnail</label>
+						<label class="col-md-4 col-form-label text-md-right">TEST</label>
 						<div class="col-md-6">
 							<div class="custom-file">
-								<input type="file" class="custom-file-input" id="customFile" ref="file" @change="handleFileObject">
+								<input type="file" name="test" class="custom-file-input" id="customFile" ref="file" @change="handleFileObject">
 								<label class="custom-file-label text-left" for="customFile"><% row.file_name %></label>
 							</div>
 						</div>
@@ -122,7 +126,7 @@
 						</div>
 					  </div>	
 					</div>										
-					<button @click="saveForm" type="button" class="btn btn-sm btn-success">Save</button>
+					<button type="button" @click="saveForm" class="btn btn-sm btn-success">Save</button>
 				</div>
 			</div>
 		</div>
@@ -161,11 +165,12 @@ var app = new Vue({
 			files: [],
 
 			insert_items: [{
-				item_name : '',
-				item_id : 0,
-				price : 0.00,
-				quentity : 0.00,
-				total_amount : 0.00,
+				item_name:    null,
+				item_id:      0,
+				price:        0.00,
+				quentity:     0.00,
+				file:         null,
+				total_amount: 0.00,
 			}],
 
 			update_items: [],
@@ -203,9 +208,13 @@ var app = new Vue({
 
 	methods: {
 		handleFileObject(event) {
+			this.row.files.splice(this.row.files.indexOf(event), 1);
 			this.row.files = [...this.row.files, event.target.files[0]];
-			// console.log(this.row.file);
-			// this.row.file_name = this.row.file.name;
+			console.log(this.row.files);
+		},
+
+		ItemhandleFile(event, index) {
+			this.row.insert_items[index].file = event.target.files[0];
 		},
 		
 		itemTotal(item) {
@@ -215,7 +224,7 @@ var app = new Vue({
 		},
 
 		addItem(item) {
-			if(item.item_name.length > 0) {
+			if(item.item_name != null) {
 				if(item.item_id > 0) {
 					this.row.insert_items.push({
 						item_name : '',
@@ -363,11 +372,10 @@ var app = new Vue({
 			const row_data = JSON.stringify(this.row);
 
 			let formData = new FormData()
+			formData.append('row', row_data);
 			for (var i = this.row.files.length - 1; i >= 0; i--) {
 				formData.append('files[]', this.row.files[i]);
-				formData.append('row', row_data);
 			}
-
 			axios.post("/{{ $dir }}/{{ $model }}/" + this.row.id, formData, config)
 			.then(response => {
 				// this.row.id = response.data.id;
