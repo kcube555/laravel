@@ -30,3 +30,5 @@ Route::post('{dir}/{model}/simple_json', 'FormController@simpleJson')->middlewar
 Route::get('{dir}/{model}', 'FormController@indexList')->middleware('auth');
 Route::match(['GET', 'POST'], '{dir}/{model}/{id}', 'FormController@edit')->middleware('auth');
 
+Route::match(['GET', 'POST'], '{dir}/{model}/{id}/export', 'FormController@export')->middleware('auth');
+

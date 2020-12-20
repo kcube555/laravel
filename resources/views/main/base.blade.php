@@ -27,8 +27,6 @@
 				</div>
 			</main>
 		</div>
-
-
 	</div>
 
 	<script type="text/javascript" src="{{ URL::asset('js/jquery.min.js') }}"></script>

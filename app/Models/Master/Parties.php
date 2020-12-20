@@ -8,14 +8,23 @@ class Parties extends \App\Models\BaseModel {
 
 	// protected $table = 'parties';
 
-	protected $fillable = array('name','address','city', 'pincode', 'mobile_no', 'email_id');
+	protected $primaryKey = 'id';
+
+	protected $fillable = [
+						'name',
+						'code',
+						'address',
+						'city',
+						'pincode',
+						'mobile',
+						'email'
+					];
 
 	public function getRows() {
 		$data['rows'] = self::all();
-		$data['headers'] = ['Name', 'Address', 'City', 'Pincode', 'Moble No.', 'Email Id'];
-		$data['data'] = ['name', 'address', 'city', 'pincode', 'mobile_no', 'email_id'];
+		$data['headers'] = ['Code', 'Name', 'City', 'Pincode', 'Moble No.', 'Email Id'];
+		$data['data'] = ['code', 'name', 'city', 'pincode', 'mobile', 'email'];
 		$data['link'] = 1;
-		// echo "<pre>"; print_r($data['rows']); exit();
 		return $data;
 	}
 }

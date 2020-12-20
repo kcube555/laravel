@@ -20,12 +20,12 @@
 							<div class="col-sm-2">
 								<div class="form-group">
 									<label>Code <span class="text-danger">*</span></label>
-									<input type="text" class="form-control" :class="{'border-danger': errors['code']}" v-model="row.code">
+									<input type="text" class="form-control" :class="{'border-danger': errors['party']}" v-model="row.code">
 								</div>
 							</div>
 							<div class="col-sm-5">
 								<div class="form-group">
-									<label>Name</label>
+									<label>Name </label>
 									<input type="text" class="form-control" :class="{'border-danger': errors['name']}" v-model="row.name">
 								</div>
 							</div>
@@ -39,20 +39,20 @@
 						<div class="row">
 							<div class="col-sm-2">
 								<div class="form-group">
-									<label>City</label>
-									<input type="text" class="form-control" v-model="row.city">
+									<label>State</label>
+									<input type="text" class="form-control" v-model="row.state_id">
 								</div>
 							</div>
 							<div class="col-sm-5">
 								<div class="form-group">
-									<label>Pin Code</label>
-									<input type="text" class="form-control" v-model="row.pincode">
+									<label>PAN</label>
+									<input type="text" class="form-control" v-model="row.pan">
 								</div>
 							</div>
 							<div class="col-sm-5">
 								<div class="form-group">
-									<label>Mobile</label>
-									<input type="text" class="form-control" v-model="row.mobile">
+									<label>GSTIN</label>
+									<input type="text" class="form-control" v-model="row.gstin">
 								</div>
 							</div>
 						</div>
@@ -60,7 +60,7 @@
 							<div class="col-sm-12">
 								<div class="form-group">
 									<label>Address</label>
-									<textarea rows="5" type="text" class="form-control" v-model="row.address"></textarea>
+									<textarea type="text" class="form-control" v-model="row.address"></textarea>
 								</div>
 							</div>
 						</div>
@@ -87,14 +87,15 @@ new Vue({
 		is_edit: true,
 
 		row: {
-			id:      "{{ Crypt::encrypt($id) }}",
-			code:    null,
-			name:    null,
-			email:   null,
-			city:    0,
-			pincode: null,
-			mobile:  null,
-			address: null,
+			id:       "{{ Crypt::encrypt($id) }}",
+			code:     null,
+			name:     null,
+			email:    null,
+			mobile:   0,
+			pan:      null,
+			gstin:    null,
+			address:  null,
+			state_id: 0,
 		},
 	},
 
@@ -105,13 +106,14 @@ new Vue({
 			.then(response => {
 				this.is_edit = (response.data.decrypt_id > 0) ? true: false;
 				if(this.is_edit) {
-					this.row.code    = response.data.data.code;
-					this.row.name    = response.data.data.name;
-					this.row.email   = response.data.data.email;
-					this.row.city    = response.data.data.city;
-					this.row.pincode = response.data.data.pincode;
-					this.row.mobile  = response.data.data.mobile;
-					this.row.address = response.data.data.address;
+					this.row.code     = response.data.data.code;
+					this.row.name     = response.data.data.name;
+					this.row.email    = response.data.data.email;
+					this.row.mobile   = response.data.data.mobile;
+					this.row.pan      = response.data.data.pan;
+					this.row.gstin    = response.data.data.gstin;
+					this.row.address  = response.data.data.address;
+					this.row.state_id = response.data.data.state_id;
 				}
 			});
 	},

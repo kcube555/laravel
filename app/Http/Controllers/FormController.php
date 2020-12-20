@@ -57,7 +57,9 @@ class FormController extends ControllerBase
 			// exit;
 			// $client = new \Google_Client();
 			// echo "Done"; exit;
+
 			$post    = json_decode($postAll['row']);
+
 			// foreach ($files as $key => $file) {
 			// 	$file_ext = $file->getClientOriginalExtension();
 			// 	$unique_id = uniqid();
@@ -86,6 +88,15 @@ class FormController extends ControllerBase
 		$data['model'] = $model;
 
 		return view(strtolower($dir).'.'.strtolower($model).'_edit', $data);
+	}
+
+	public function export($dir, $model, $id) {
+		$id         = \Crypt::decrypt($id);		
+		$model_name = "\App\Models"."\\".$dir."\\".$model;
+
+		$row = $model_name::find($id);
+
+		$row->export();
 	}
 
 	public function simpleJson($dir, $model)

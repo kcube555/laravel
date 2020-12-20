@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Redirect;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
+use PDF;
+
 class ControllerBase extends Controller
 {
 	public function __construct()

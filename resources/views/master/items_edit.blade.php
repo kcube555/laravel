@@ -2,14 +2,18 @@
 
 @section('content')
 
+<ol class="mt-2 breadcrumb mb-1">
+	<li class="breadcrumb-item active"><strong> {{ $dir }}</strong></li>
+	<li class="breadcrumb-item"><a href="{{ URL::to($dir.'/'.$model) }}">{{ $model }}</a></li>
+	<li class="breadcrumb-item"><b class="text-success"> {{ ($id) ? 'Edit': 'Add' }} </b></li>
+	<a class="btn btn-sm btn-info ml-auto" href="{{ URL::to($dir.'/'.$model.'/'.Crypt::encrypt(0)) }}" role="button">Create New</a>
+</ol>
+
 <div class="content" id="app">
 	<div class="animated fadeIn">
 		<div class="row">
 			<div class="col-lg-12">
 				<div class="card">
-					<div class="card-header"><strong>{{ $dir }} / <a href="{{ URL::to($dir.'/'.$model) }}">{{ $model }}</a></strong> <small class="text-success"><b> {{ ($id) ? 'Edit': 'Add' }} </b></small>
-					<a class="btn btn-sm btn-info pull-right" href="{{ URL::to($dir.'/'.$model.'/'.Crypt::encrypt(0)) }}" role="button">Add</a>
-					</div>
 					<div class="card-body card-block">
 						<div class="row">
 							@csrf
@@ -26,11 +30,17 @@
 								</div>
 							</div>
 						</div>
-						<div class="row">							
-							<div class="col-sm-6">
+						<div class="row">
+							<div class="col-sm-3">
 								<div class="form-group">
 									<label>Rate</label>
 									<input type="text" class="form-control text-right" v-model="row.rate">
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<div class="form-group">
+									<label>GST % </label>
+									<input type="text" class="form-control text-right" v-model="row.gst">
 								</div>
 							</div>
 							<div class="col-sm-6">
@@ -38,8 +48,9 @@
 									<label>HSN Code</label>
 									<input type="text" class="form-control" v-model="row.hsn_code">
 								</div>
-							</div>							
+							</div>
 						</div>
+
 						<button @click="saveForm" type="button" class="btn btn-sm btn-primary">Save</button>
 					</div>
 				</div>
@@ -63,10 +74,11 @@ var app = new Vue({
 		row: {
 			id:       "{{ Crypt::encrypt($id) }}",
 			user_id:  "{{ Auth::user()->id }}",
-			name:     "",
-			category: "",
-			hsn_code: "",
+			name:     null,
+			category: null,
+			hsn_code: null,
 			rate:     0,
+			gst:      0,
 		},
 	},
 
@@ -82,6 +94,7 @@ var app = new Vue({
 					this.row.category = response.data.data.category;
 					this.row.hsn_code = response.data.data.hsn_code;
 					this.row.rate     = response.data.data.rate;
+					this.row.gst      = response.data.data.gst;
 				}
 			});
 	},
@@ -94,7 +107,7 @@ var app = new Vue({
 		validation() {
 			this.errors = [];
 			if( ! this.row.name) {
-				this.errors.push("Item Name Is Required");
+				this.errors.push("Item name required");
 				this.errors['name'] = true;
 			}
 		},
@@ -106,9 +119,12 @@ var app = new Vue({
 				return false;
 			}
 
-			const form_data = { row: this.row }
-			// console.log(this.row.id); return;
-			axios.post("/{{ $dir }}/{{ $model }}/" + this.row.id, form_data)
+			const row_data = JSON.stringify(this.row);
+
+			let formData = new FormData()
+			formData.append('row', row_data);
+
+			axios.post("/{{ $dir }}/{{ $model }}/" + this.row.id, formData)
 			.then(response => {
 				this.row.id = response.data.id;
 				window.location.href = "/{{ $dir }}/{{ $model }}/" + this.row.id;

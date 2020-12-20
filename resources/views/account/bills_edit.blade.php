@@ -24,7 +24,7 @@
 						<div class="col-sm-3">
 							<div class="form-group">
 								<label for="date">Date <span class="text-danger">*</span></label>
-								<input class="form-control" :class="{'border-danger': errors['date']}" id="datepicker" v-model="row.date">
+								<input class="form-control" :class="{'border-danger': errors['date']}" v-model="row.date">
 							</div>
 						</div>
 						<div class="col-sm-6">
@@ -47,7 +47,7 @@
 								<th width="40%">Name <span class="text-danger">*</span></th>
 								<th>Price</th>
 								<th>Qty</th>
-								<th>Attachment</th>
+								<th>Gst %</th>
 								<th>Total</th>
 								<th width="10%">Action</th>
 							</tr>
@@ -55,11 +55,16 @@
 							<tbody>
 							<tr v-for="(item, index) in row.update_items">
 								<td><small><% index + 1 %></small></td>
-								<td width="40%"><small><b> <% item.item_name %> </b></small></td>
+								<td width="40%"><span class="input-group-text"><small><b> <% item.item_name %> </b></small></span></td>
 								<td><input type="text" class="form-control form-control-sm" v-model="item.price"></td>
 								<td><input type="text" class="form-control form-control-sm" v-model="item.quentity"></td>
-								<td></td>
-								<td><input type="text" class="form-control form-control-sm" v-model="itemTotal(item)" readonly=""></td>
+								<td><div class="input-group input-group-sm mb-2">
+										<input type="text" class="form-control" v-model="item.gst_per">
+										<div class="input-group-append">
+											<span class="input-group-text"><% item.gst_amt %></span>
+										</div>
+									</div></td>
+								<td><span class="input-group-text"><small><% itemTotal(item) %></small></span></td>
 								<td>{!! $common->edit_button !!}</td>
 							</tr>
 
@@ -74,59 +79,35 @@
 								</td>
 								<td><input type="text" class="form-control form-control-sm" v-model="item.price"></td>
 								<td><input type="text" class="form-control form-control-sm" v-model="item.quentity"></td>
-								<td><label class="btn btn-default">Browse <input type="file" @change="ItemhandleFile($event, index)" hidden></label></td>
-								<td><input type="text" class="form-control form-control-sm" v-model="itemTotal(item)" readonly=""></td>
+								<td>
+									<div class="input-group input-group-sm mb-3">
+										<input type="text" class="form-control" v-model="item.gst_per">
+										<div class="input-group-append">
+											<span class="input-group-text"><% item.gst_amt %></span>
+										</div>
+									</div>
+								</td>
+								<td><span class="input-group-text"><small><% itemTotal(item) %></small></span></td>
 								<td>{!! $common->add_button !!}</td>
 							</tr>
 							</tbody>
 							<tfoot>
-								<tr>
-									<td colspan="2" class="text-right"> Total Amount : </td>
-									<td><% net_total_price %></td>
-									<td><% net_total_qty %></td>
-									<td></td>
-									<td><% net_total_total %></td>
-									<td></td>
-								</tr>
+							<tr>
+								<td colspan="2" class="text-right"> Total Amount : </td>
+								<td><% net_total_price %></td>
+								<td><% net_total_qty %></td>
+								<td></td>
+								<td><% row.invoice_value %></td>
+								<td></td>
+							</tr>
 							</tfoot>
 						</table>
 					</div>
-					<div class="row">
-					  <div class="form-group row">
-						<label class="col-md-4 col-form-label text-md-right">TEST</label>
-						<div class="col-md-6">
-							<div class="custom-file">
-								<input type="file" name="test" class="custom-file-input" id="customFile" ref="file" @change="handleFileObject">
-								<label class="custom-file-label text-left" for="customFile"><% row.file_name %></label>
-							</div>
-						</div>
-					  </div>	
-					</div>
-
-					<div class="row">
-					  <div class="form-group row">
-						<label class="col-md-4 col-form-label text-md-right">Thumbnail</label>
-						<div class="col-md-6">
-							<div class="custom-file">
-								<input type="file" class="custom-file-input" id="customFile" ref="file" @change="handleFileObject">
-								<label class="custom-file-label text-left" for="customFile"><% row.file_name %></label>
-							</div>
-						</div>
-					  </div>	
-					</div>
-
-					<div class="row">
-					  <div class="form-group row">
-						<label class="col-md-4 col-form-label text-md-right">Thumbnail</label>
-						<div class="col-md-6">
-							<div class="custom-file">
-								<input type="file" class="custom-file-input" id="customFile" ref="file" @change="handleFileObject">
-								<label class="custom-file-label text-left" for="customFile"><% row.file_name %></label>
-							</div>
-						</div>
-					  </div>	
-					</div>										
 					<button type="button" @click="saveForm" class="btn btn-sm btn-success">Save</button>
+					@if($id)
+						<a class="btn btn-sm btn-secondary" target="_blank" href="{{ URL::to($dir.'/'.$model.'/'.Crypt::encrypt($id).'/export?format=pdf') }}" role="button">PDF</a>
+						<a class="btn btn-sm btn-primary" target="_blank" href="{{ URL::to($dir.'/'.$model.'/'.Crypt::encrypt($id).'/export?format=pdf&email=1') }}" role="button">Mail</a>
+					@endif
 				</div>
 			</div>
 		</div>
@@ -149,18 +130,18 @@ var app = new Vue({
 		item_index:      0,
 		net_total_price: 0,
 		net_total_qty:   0,
-		net_total_total: 0,
 		is_edit:         true,
 
 		row: {
-			id:           "{{ Crypt::encrypt($id) }}",
-			user_id:      "{{ Auth::user()->id }}",
-			type:         "Invoice",
-			number:       'Generate After Save',
-			date:         "",
-			party_id:     0,
-			party_name:   "",
-			file_name:    "",
+			id:            "{{ Crypt::encrypt($id) }}",
+			user_id:       "{{ Auth::user()->id }}",
+			type:          "Invoice",
+			number:        'Generate After Save',
+			date:          null,
+			party_id:      0,
+			party_name:    null,
+			invoice_value: 0.00,
+			// file_name:  "",
 
 			files: [],
 
@@ -169,7 +150,9 @@ var app = new Vue({
 				item_id:      0,
 				price:        0.00,
 				quentity:     0.00,
-				file:         null,
+				// file:      null,
+				gst_per:      0.00,
+				gst_amt:      0.00,
 				total_amount: 0.00,
 			}],
 
@@ -210,7 +193,6 @@ var app = new Vue({
 		handleFileObject(event) {
 			this.row.files.splice(this.row.files.indexOf(event), 1);
 			this.row.files = [...this.row.files, event.target.files[0]];
-			console.log(this.row.files);
 		},
 
 		ItemhandleFile(event, index) {
@@ -218,7 +200,15 @@ var app = new Vue({
 		},
 		
 		itemTotal(item) {
+			let item_total = 0.00;
+			let gst_amt    = 0.00;
+
 			item_total = parseFloat(item.price) * parseFloat(item.quentity);
+			if(item_total > 0) {
+				item.gst_amt = ((item_total * item.gst_per)  / 100);
+			}
+
+			item.total_amount = item_total;
 			this.calcNetTotal();
 			return item_total;
 		},
@@ -250,7 +240,7 @@ var app = new Vue({
 			}
 		},
 
-		removeItem(index) {			
+		removeItem(index) {
 			if(this.itemValidation()) {
 				this.row.insert_items.splice(index,1);
 			} else {
@@ -260,7 +250,7 @@ var app = new Vue({
 
 		getSimpleJson() {
 			this.customer_jsons = {};
-			if(this.row.party_name.length > 2) {
+			if(this.row.party_name != null && this.row.party_name.length > 2) {
 				const json_data = {
 				  query:this.row.party_name,
 				}
@@ -274,7 +264,7 @@ var app = new Vue({
 		getMultipleJson(item, index) {
 			this.item_index = index;
 			this.item_jsons = {};
-			if(item.item_name.length > 2) {
+			if(item.item_name != null && item.item_name.length > 2) {
 				const json_data = {
 				  query:item.item_name,
 				  select_fields: ['id', 'name', 'rate'],
@@ -310,9 +300,6 @@ var app = new Vue({
 				net_total_price += parseFloat(item.price);
 				net_total_qty   += parseFloat(item.quentity);
 				net_total_total += parseFloat(item.price * item.quentity);
-				if(item.item_id == 0) {
-
-				}
 			}
 
 			if(this.is_edit) {
@@ -324,9 +311,9 @@ var app = new Vue({
 				}
 			}
 
-			this.net_total_price = net_total_price;
-			this.net_total_qty   = net_total_qty;
-			this.net_total_total = net_total_total;
+			this.net_total_price   = net_total_price;
+			this.net_total_qty     = net_total_qty;
+			this.row.invoice_value = net_total_total;
 		},
 
 		itemValidation() {
@@ -378,8 +365,8 @@ var app = new Vue({
 			}
 			axios.post("/{{ $dir }}/{{ $model }}/" + this.row.id, formData, config)
 			.then(response => {
-				// this.row.id = response.data.id;
-				// window.location.href = "/{{ $dir }}/{{ $model }}/" + this.row.id;
+				this.row.id = response.data.id;
+				window.location.href = "/{{ $dir }}/{{ $model }}/" + this.row.id;
 			})
 			.catch(error => {
 				this.errorMessage = error.message;

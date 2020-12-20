@@ -5,13 +5,24 @@ namespace App\Models\Account;
 use Illuminate\Database\Eloquent\Model;
 
 class BillItems extends \App\Models\BaseModel {
-
-	// protected $table = 'parties';
-
 	public $timestamps = false;
 
-	protected $fillable = ['bill_id', 'item_id','price', 'quentity', 'sgst_per', 'sgst_amt', 'cgst_per', 'cgst_amt',
-							'igst_per', 'igst_amt', 'disc_per', 'disc_amt', 'total_amount'];
+	protected $fillable = [
+						'bill_id',
+						'item_id',
+						'price',
+						'quentity',
+						'gst_per',
+						'gst_amt',
+						'disc_per',
+						'disc_amt',
+						'total_amount'
+					];
+
+	public function getTotal() {
+		$total = round($this->price * $this->quentity, 2);
+		return $total;
+	}
 
 	public function bill() {
 		return $this->belongsTo('\App\Models\Account\Bills');

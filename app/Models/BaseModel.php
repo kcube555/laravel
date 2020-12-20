@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class BaseModel extends Model {	
+class BaseModel extends Model {
 	protected static function boot()
 	{
 		parent::boot();
@@ -21,8 +21,6 @@ class BaseModel extends Model {
 	}
 
 	public function saveForm($id, $post) {
-		$post = $post['row'];
-
 		foreach ($post as $key => $value) {
 			if(\Schema::hasColumn($this->getTable(), $key)) {
 				if($this->getKeyName() == $key) {
@@ -35,13 +33,13 @@ class BaseModel extends Model {
 
 		$this->save();
 
-		if(isset($post['parent_id']) AND isset($post['item_dir'])) {
-			$child_model_name = "\App\Models"."\\".$post['item_dir']."\\".$post['item_model'];
-			$parent_id  = $post['parent_id'];
+		if(isset($post->item_dir)) {
+			$child_model_name = "\App\Models"."\\".$post->item_dir."\\".$post->item_model;
+			$parent_id        = $post->parent_id;
 		}
 
-		if(isset($post['insert_items'])) {
-			foreach ($post['insert_items'] as $items) {
+		if(isset($post->insert_items)) {
+			foreach ($post->insert_items as $items) {
 				$row = new $child_model_name();
 
 				foreach ($items as $key => $value) {
@@ -55,9 +53,9 @@ class BaseModel extends Model {
 			}
 		}
 
-		if(isset($post['update_items'])) {
-			foreach ($post['update_items'] as $items) {
-				$row = $child_model_name::whereId($items['id'])->first();
+		if(isset($post->update_items)) {
+			foreach ($post->update_items as $items) {
+				$row = $child_model_name::whereId($items->id)->first();
 
 				foreach ($items as $key => $value) {
 					if(\Schema::hasColumn($row->getTable(), $key)) {
@@ -68,8 +66,8 @@ class BaseModel extends Model {
 			}
 		}
 
-		if(isset($post['delete_items'])) {
-			foreach (array_unique($post['delete_items']) as $id) {				
+		if(isset($post->delete_items)) {
+			foreach (array_unique($post->delete_items) as $id) {
 				try {
 					$row = $child_model_name::findOrFail($id);
 					$row->delete();
