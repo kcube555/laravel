@@ -241,6 +241,7 @@ var app = new Vue({
 			item_total = parseFloat(item.price) * parseFloat(item.quentity);
 			if(item_total > 0) {
 				item.gst_amt = ((item_total * item.gst_per)  / 100);
+				item_total = item_total + item.gst_amt;
 			}
 
 			item.total_amount = item_total;
@@ -335,6 +336,7 @@ var app = new Vue({
 				net_total_price += parseFloat(item.price);
 				net_total_qty   += parseFloat(item.quentity);
 				net_total_total += parseFloat(item.price * item.quentity);
+				net_total_total += parseFloat(item.gst_amt);
 			}
 
 			if(this.is_edit) {
@@ -343,6 +345,7 @@ var app = new Vue({
 					net_total_price += parseFloat(item.price);
 					net_total_qty   += parseFloat(item.quentity);
 					net_total_total += parseFloat(item.price * item.quentity);
+					net_total_total += parseFloat(item.gst_amt);
 				}
 			}
 
