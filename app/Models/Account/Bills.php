@@ -23,7 +23,8 @@ class Bills extends \App\Models\BaseModel {
 		parent::boot();
 
 		self::creating(function($model){
-			// ... code here
+			$model->date     = date('Y-m-d', strtotime('+0 day', strtotime($model->date)));
+			$model->validity = date('Y-m-d', strtotime('+0 day', strtotime($model->validity)));
 		});
 
 		self::created(function($model){
@@ -32,7 +33,8 @@ class Bills extends \App\Models\BaseModel {
 		});
 
 		self::updating(function($model){
-			// ... code here
+			$model->date     = date('Y-m-d', strtotime('+0 day', strtotime($model->date)));
+			$model->validity = date('Y-m-d', strtotime('+0 day', strtotime($model->validity)));
 		});
 
 		self::updated(function($model){
@@ -87,7 +89,7 @@ class Bills extends \App\Models\BaseModel {
 		return $data;
 	}
 
-	public function saveForm($id, $post) {
+	public function saveForm($id, $post, $files) {
 		foreach ($post as $key => $value) {
 			if(\Schema::hasColumn($this->getTable(), $key)) {
 				if($this->getKeyName() == $key) {
@@ -95,6 +97,16 @@ class Bills extends \App\Models\BaseModel {
 					continue;
 				}
 				$this->$key = $value;
+			}
+		}
+
+		foreach ($files as $field => $file) {
+			if(\Schema::hasColumn($this->getTable(), $field)) {
+				$file_ext = $file->getClientOriginalExtension();
+				$unique_id = uniqid();
+				$contents = file_get_contents($file->path());
+				\Storage::disk('local')->put($class_name.'/'.$this->id.'/'.$unique_id.'.'.$file_ext, $contents);
+				$this->$field = $unique_id.'.'.$file_ext;
 			}
 		}
 
@@ -262,7 +274,7 @@ class Bills extends \App\Models\BaseModel {
 			$pdf->Cell(20, 6, $r->total_amount, 'LTR', 1, 'R', 0, '', 1);
 		}
 
-		$blank_space = 250 - $pdf->getY();
+		$blank_space = 230 - $pdf->getY();
 		$pdf->MultiCell(190, $blank_space, '', 'LTBR', 'L', 1, 1, 10, $pdf->getY(), true, 0, false, true, $blank_space, 'T', true);
 
 		$pdf->Cell(120, 5, 'Total', 'LT', 0, 'R', 0, '', 1);
@@ -270,8 +282,13 @@ class Bills extends \App\Models\BaseModel {
 		$pdf->Cell(30, 5, '', 'LT', 0, '', 0, '', 1);
 		$pdf->Cell(20, 5, $this->invoice_value, 'LTR', 1, 'R', 0, '', 1);
 
-		$pdf->MultiCell(95, 20, $this->party->address, 'LTB', 'L', 1, 0, 10, 255, true, 0, false, true, 20, 'T', true);
-		$pdf->MultiCell(95, 20, $this->party->address, 'LTRB', 'L', 1, 1, 105, 255, true, 0, false, true, 20, 'T', true);
+		$pdf->SetFont('times', 'B', 10);
+		$pdf->Cell(95, 5, 'Remarks : ', 'LT', 0, 'L', 0, '', 1);
+		$pdf->Cell(95, 5, 'Terms : ', 'LTR', 1, 'L', 0, '', 1);
+
+		$pdf->SetFont('times', '', 10);
+		$pdf->MultiCell(95, 36, $this->terms, 'LB', 'L', 1, 0, 10, 240, true, 0, false, true, 40, 'T', true);
+		$pdf->MultiCell(95, 36, $this->remarks, 'LRB', 'L', 1, 1, 105, 240, true, 0, false, true, 40, 'T', true);
 
 		if($email) {
 			$pdf->Output(base_path("storage/tmp/".$file_name), 'F');

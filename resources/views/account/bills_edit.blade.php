@@ -24,7 +24,11 @@
 						<div class="col-sm-3">
 							<div class="form-group">
 								<label for="date">Date <span class="text-danger">*</span></label>
-								<input class="form-control" :class="{'border-danger': errors['date']}" v-model="row.date">
+								<v-date-picker v-model="row.date">
+									<template v-slot="{ inputValue, inputEvents }">
+										<input class="form-control" class="bg-white border px-2 py-1 rounded" :value="inputValue" v-on="inputEvents" />
+									</template>
+								</v-date-picker>
 							</div>
 						</div>
 						<div class="col-sm-6">
@@ -39,6 +43,32 @@
 							</div>
 						</div>
 					</div>
+					<div class="row">
+						<div class="col-sm-3">
+							<div class="form-group">
+								<label for="date">Validity</label>
+								<v-date-picker v-model="row.validity">
+									<template v-slot="{ inputValue, inputEvents }">
+										<input class="form-control" class="bg-white border px-2 py-1 rounded" :value="inputValue" v-on="inputEvents" />
+									</template>
+								</v-date-picker>
+							</div>
+						</div>				
+					</div>					
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Terms & Conditions</label>
+								<textarea class="form-control" rows="3" v-model="row.terms"></textarea>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Remarks</label>
+								<textarea class="form-control" rows="3" v-model="row.remarks"></textarea>
+							</div>
+						</div>
+					</div>					
 					<div class="row">
 						<table class="table table-sm table-bordered">
 							<thead>
@@ -138,10 +168,12 @@ var app = new Vue({
 			type:          "Invoice",
 			number:        'Generate After Save',
 			date:          null,
+			validity:      null,			
 			party_id:      0,
 			party_name:    null,
 			invoice_value: 0.00,
-			// file_name:  "",
+			terms:         null,
+			remarks:       null,			
 
 			files: [],
 
@@ -177,6 +209,9 @@ var app = new Vue({
 					this.row.type         = response.data.data.type;
 					this.row.number       = response.data.data.number;
 					this.row.date         = response.data.data.date;
+					this.row.validity     = response.data.data.validity;
+					this.row.terms        = response.data.data.terms;
+					this.row.remarks      = response.data.data.remarks;
 					this.row.party_id     = response.data.data.party_id;
 					this.row.party_name   = response.data.data.party.name;
 					this.row.update_items = response.data.data.bill_items;

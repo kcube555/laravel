@@ -64,7 +64,26 @@
 								</div>
 							</div>
 						</div>
-
+						<div class="row">
+							<div class="col-sm-4">
+								<div class="custom-file">
+									<input type="file" class="custom-file-input" id="logo" @change="selectFile">
+									<label class="custom-file-label" for="logo">Upload Logo</label>
+								</div>
+							</div>
+							<div class="col-sm-4">
+								<div class="custom-file">
+									<input type="file" class="custom-file-input" id="signature" @change="selectFile">
+									<label class="custom-file-label" for="signature">Upload Sign</label>
+								</div>
+							</div>
+							<div class="col-sm-4">
+								<div class="custom-file">
+									<input type="file" class="custom-file-input" id="letterhead" @change="selectFile">
+									<label class="custom-file-label" for="letterhead">Upload Letterhead</label>
+								</div>
+							</div>
+						</div>
 						<button type="button" @click="saveForm" class="btn btn-sm btn-success">Save</button>
 					</div>
 				</div>
@@ -96,6 +115,10 @@ new Vue({
 			gstin:    null,
 			address:  null,
 			state_id: 0,
+
+			files: {
+				logo: null,
+			},
 		},
 	},
 
@@ -106,19 +129,23 @@ new Vue({
 			.then(response => {
 				this.is_edit = (response.data.decrypt_id > 0) ? true: false;
 				if(this.is_edit) {
-					this.row.code     = response.data.data.code;
-					this.row.name     = response.data.data.name;
-					this.row.email    = response.data.data.email;
-					this.row.mobile   = response.data.data.mobile;
-					this.row.pan      = response.data.data.pan;
-					this.row.gstin    = response.data.data.gstin;
-					this.row.address  = response.data.data.address;
-					this.row.state_id = response.data.data.state_id;
+					this.row.code                  = response.data.data.code;
+					this.row.name                  = response.data.data.name;
+					this.row.email                 = response.data.data.email;
+					this.row.mobile                = response.data.data.mobile;
+					this.row.pan                   = response.data.data.pan;
+					this.row.gstin                 = response.data.data.gstin;
+					this.row.address               = response.data.data.address;
+					this.row.state_id              = response.data.data.state_id;
 				}
 			});
 	},
 
 	methods: {
+        selectFile(event) {
+        	this.row.files.logo = event.target.files[0];
+        },
+
 		validation() {
 			this.errors = [];
 			if( ! this.row.code) {
@@ -148,6 +175,9 @@ new Vue({
 
 			let formData = new FormData()
 			formData.append('row', row_data);
+
+			formData.append('row', row_data);
+			formData.append('files[logo]', this.row.files.logo);
 
 			axios.post("/{{ $dir }}/{{ $model }}/" + this.row.id, formData)
 			.then(response => {

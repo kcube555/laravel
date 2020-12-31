@@ -44,6 +44,8 @@ class FormController extends ControllerBase
 			// request()->file('test')->store('', "google");
 			// exit;
 			$postAll = request()->all();
+			$files   = isset($postAll['files']) ? $postAll['files'] : [];
+
 			// $files   = $postAll['files'][0];
 			// \Log::info($files); exit;
 			// $files->store('', "google");
@@ -72,8 +74,8 @@ class FormController extends ControllerBase
 			// echo $file; exit;
 			// $contents = file_get_contents($file);
 
-			// echo "<pre>"; print_r($post); exit;
-			$id = $row->saveForm($id, $post);
+			// echo "<pre>"; print_r($files); exit;
+			$id = $row->saveForm($id, $post, $files);
 
 			return response()->json([
 				'data'       => $model_name::find($id),

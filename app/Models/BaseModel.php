@@ -20,7 +20,7 @@ class BaseModel extends Model {
 		return $data;
 	}
 
-	public function saveForm($id, $post) {
+	public function saveForm($id, $post, $files) {
 		foreach ($post as $key => $value) {
 			if(\Schema::hasColumn($this->getTable(), $key)) {
 				if($this->getKeyName() == $key) {

@@ -36,6 +36,7 @@
 	<script type="text/javascript" src="{{ URL::asset('js/perfect.js') }}"></script>
 	<script type="text/javascript" src="{{ URL::asset('js/vue.js') }}"></script>
 	<script type="text/javascript" src="{{ URL::asset('js/axios.min.js') }}"></script>
+	<script type="text/javascript" src="{{ URL::asset('js/v-calender.js') }}"></script>	
 
 	@yield('javascript')
 
